@@ -46,11 +46,13 @@ namespace ASPPEER.Repositories
             User newUser;
             do
             {
+                // Generation variables, which generates strings by regex expression.
                 Xeger nameGenerator = new(@"[0-9A-Za-z]{6,12}");
                 Xeger emailGenerator = new(@"[A-Z0-9a-z]+@[a-z]+\.[a-z]{2,4}");
                 newUser = new User(nameGenerator.Generate(), emailGenerator.Generate());
             } while (_users.FirstOrDefault(u => u.Email == newUser.Email) != null);
             _users.Add(newUser);
+            _users = _users.OrderBy(u => u.Email).ToList();
             return newUser;
         }
 
@@ -70,6 +72,7 @@ namespace ASPPEER.Repositories
             if(_users.FirstOrDefault(u => u.Email == user.Email) != null)
                 throw new ArgumentException("User already exists");
             _users.Add(user);
+            _users = _users.OrderBy(u => u.Email).ToList();
         }
     }
     

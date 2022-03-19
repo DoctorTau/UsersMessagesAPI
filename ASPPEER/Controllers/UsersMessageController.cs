@@ -77,7 +77,7 @@ namespace ASPPEER.Controllers
         public ActionResult<User> GetUserByEmail(string email)
         {
             var user = _usersRepository.GetAllUsers().FirstOrDefault(u => u.Email == email);
-            if (user == null) NotFound("User not found");
+            if (user == null) return NotFound("User not found");
             return Ok(user);
         }
 
@@ -150,6 +150,25 @@ namespace ASPPEER.Controllers
             }
 
             return Ok(newUser);
+        }
+
+        [HttpPost("Add-message")]
+        public ActionResult<MessageClass> AddMessage(string subject, string messageText, string senderId,
+            string receiverId)
+        {
+            MessageClass newMessage = new MessageClass(subject, messageText, senderId, receiverId);
+            try
+            {
+                _messagesRepository.AddMessage(newMessage,
+                    _usersRepository.GetAllUsers().ToList());
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+
+            return Ok(newMessage);
+
         }
     }
 }
